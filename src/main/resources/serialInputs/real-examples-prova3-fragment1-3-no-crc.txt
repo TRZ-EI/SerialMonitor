@@ -1,0 +1,38 @@
+^t10100 Prova 3 frammento 3 
+^C
+^tG0100  SELEZIONE COMANDI 
+^t60307Esecuzione prove  
+^t10407Programmazione parametri  
+^t10507Programmazione tappi 
+^t10607Calibrazione strumento 
+^t10707Programmazione orologio  
+^t10807Visualizzazione contapezzi  
+^t20B07F1 per selezionare in DOWN  
+^t20C07F2 per selezionare in UP  
+^t20D07ENT per eseguire  
+^C
+^t10000Verifica dati del blocco
+^n120001C00000001
+^t30300Dati memorizzati OK
+^t30400Programmazione tappi OK
+
+
+
+
+
+
+
+^C
+^tE0100    TEST EMERGENZA     
+^t20E00   ENT per uscire
+^t10500   FUNGO EMERGENZA PIGIATO
+^t10700   Sbloccare EMERGENZA e pigiare RES EMERGENZA
+^t10900   Attesa RES EMERGENZA
+^t10B00   Fine test EMERGENZA
+^C
+^t10100                                                           
+^t10000                                                           
+^t60000  Rilasciare i pulsanti
+^t10000                                                           
+^t10000   ATTESA START BLOCCO  
+^n120001C00000001

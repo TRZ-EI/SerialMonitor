@@ -1,0 +1,38 @@
+^t10100 Prova 3 frammento 3 B86F
+^C3978
+^tG0100  SELEZIONE COMANDI CF33
+^t60307Esecuzione prove  1DCC
+^t10407Programmazione parametri  380B
+^t10507Programmazione tappi DB9E
+^t10607Calibrazione strumento 0448
+^t10707Programmazione orologio  BE29
+^t10807Visualizzazione contapezzi  6ADB
+^t20B07F1 per selezionare in DOWN  12F1
+^t20C07F2 per selezionare in UP  DE33
+^t20D07ENT per eseguire  782F
+^C3978
+^t10000Verifica dati del bloccoAED9
+^n120001C000000010744
+^t30300Dati memorizzati OKF541
+^t30400Programmazione tappi OK03DA
+
+
+
+
+
+
+
+^C3978
+^tE0100    TEST EMERGENZA     754D
+^t20E00   ENT per uscireBB37
+^t10500   FUNGO EMERGENZA PIGIATOC02A
+^t10700   Sbloccare EMERGENZA e pigiare RES EMERGENZABE27
+^t10900   Attesa RES EMERGENZA9B41
+^t10B00   Fine test EMERGENZAEA07
+^C3978
+^t10100                                                           D568
+^t10000                                                           AAF8
+^t60000  Rilasciare i pulsanti5243
+^t10000                                                           AAF8
+^t10000   ATTESA START BLOCCO  0966
+^n120001C000000010744

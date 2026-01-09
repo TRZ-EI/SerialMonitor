@@ -1,0 +1,10 @@
+^C3978
+^t10100 Prova 3 frammento 2 B86F
+^tE0100  -- TRZ -- Arona  (NO) 854C
+^t10300 Strumento per prove di tenuta 7362
+^t10400 Verifica memoria di calibrazione 3ABB
+^t10900 Vers firm. 150100-0 30b 640  A80C
+^t10B00 mod. MC15-G10  mat ------------ 9BDB
+^t30400 Calibrazione 0K                        3A63
+^t10500 Verifica memoria dati9EBE
+^t30500 Verifica memoria dati  OK    5B5C

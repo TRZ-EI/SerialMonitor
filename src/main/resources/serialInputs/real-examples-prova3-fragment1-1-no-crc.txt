@@ -1,0 +1,18 @@
+^C
+^t10100 Prova 3 frammento 1 
+^t10200prova trasmissione testo              trasmissione 
+^t30300prova trasmissione testo              trasmissione
+^t20400prova trasmissione testo              trasmissione 
+^t40500prova trasmissione testo              trasmissione 
+^t40600prova trasmissione testo              trasmissione 
+^t10700prova trasmissione testo              trasmissione 
+^t30800prova trasmissione testo              trasmissione 
+^t10900prova trasmissione testo              trasmissione 
+^t20A00prova trasmissione testo              trasmissione 
+^t10B00prova trasmissione testo              trasmissione 
+^t20C00prova trasmissione testo              trasmissione 
+^t10D00prova trasmissione testo              trasmissione 
+^t40E00prova trasmissione testo              trasmissione 
+^t10F00prova trasmissione testo              trasmissione 
+^t21000prova trasmissione testo              trasmissione 
+^C

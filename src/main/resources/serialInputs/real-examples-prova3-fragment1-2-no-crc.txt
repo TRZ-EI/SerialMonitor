@@ -1,0 +1,10 @@
+^C
+^t10100 Prova 3 frammento 2 
+^tE0100  -- TRZ -- Arona  (NO) 
+^t10300 Strumento per prove di tenuta 
+^t10400 Verifica memoria di calibrazione 
+^t10900 Vers firm. 150100-0 30b 640  
+^t10B00 mod. MC15-G10  mat ------------ 
+^t30400 Calibrazione 0K                        
+^t10500 Verifica memoria dati
+^t30500 Verifica memoria dati  OK    

@@ -1,0 +1,76 @@
+package org.talamona.terminal.comunication;
+
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+
+import java.io.InputStream;
+
+
+
+/**
+ * Handles the input coming from the serial port. A new line character
+ * is treated as the end of a block in this example.
+ */
+public class SerialReader implements SerialPortEventListener {
+
+
+    private InputStream input;
+    private SerialCommunicatorInterface communicator;
+    private StringBuilder buffer;
+
+    //some ascii values for for certain things
+    private final int SPACE_ASCII = 32;
+    private final int DASH_ASCII = 45;
+    private final int NEW_LINE_ASCII = 10;
+
+
+    public SerialReader (InputStream in, SerialCommunicatorInterface communicator) {
+        this.input = in;
+        this.communicator = communicator;
+        this.buffer = new StringBuilder();
+    }
+
+    public void serialEvent(SerialPortEvent evt) {
+            int data;
+
+            try{
+                int len = 0;
+                while ( ( data = this.input.read()) > -1 ){
+                    if ( data == '\n' ) {
+                        break;
+                    }
+                    //buffer[len++] = (byte) data;
+                    buffer.append((char) data);
+                }
+                System.out.print(buffer.toString() + '\n');
+                buffer = new StringBuilder();
+            }
+/*
+        StringBuilder message = new StringBuilder();
+        if (evt.getEventType() == SerialPortEvent.DATA_AVAILABLE){
+            try{
+                int value = this.input.available();
+                byte[] data = new byte[value];
+                int read = this.input.read(data);
+                for (byte b: data){
+                    message.append((char)b);
+                }
+                if (message.toString().indexOf(NEW_LINE_ASCII) > 0) {
+                    String[] values = message.toString().split("\n");
+                    message.setLength(0);
+                    for (int i = 0; i < values.length; i ++) {
+                        System.out.println("RECEIVED: " + values[i]);
+                        //
+                        // this.communicator.convertStringDataToNumericValue(values[i]);
+                    }
+                }
+*/
+            catch (Exception e) {
+                System.out.println("Failed to read data. (" + e.toString() + ")");
+            }
+
+
+    }
+
+}
+

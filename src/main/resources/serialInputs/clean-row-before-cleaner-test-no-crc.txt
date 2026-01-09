@@ -1,0 +1,17 @@
+^t10100 Prova senza comando ClearRow 
+^t10900 Perdita max +camera1         mBar
+^n151091600000005
+^n151091600000005
+^t10A00 Perdita max -camera1         mBar
+^n1510A1600000028
+^n1510A1600000028
+^t10B00 Perdita max +camera2         mBar
+^n1510B160000000A
+^n1510B160000000A
+^t10C00 Perdita max -camera2         mBar
+^n1510C1600000028
+^n1510C1600000028
+^t10900                                                           
+^t10A00                                                           
+^t10B00                                                           
+^t10C00

@@ -1,0 +1,16 @@
+^C3978
+^C3978
+^t30100prova trasmissione testo233C
+^t20200prova trasmissione testoD6A6
+^t40300prova trasmissione testo7E9D
+^t40400prova trasmissione testoC974
+^t10500prova trasmissione testo987E
+^t30600prova trasmissione testo94D5
+^t10700prova trasmissione testo3CEE
+^t20800prova trasmissione testoF054
+^t10900prova trasmissione testo5B2D
+^t20A00prova trasmissione testo0655
+^t10B00prova trasmissione testo09BC
+^t40C00prova trasmissione testo58B6
+^t10D00prova trasmissione testoEC1D
+^t20E00prova trasmissione testo4764

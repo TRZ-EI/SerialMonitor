@@ -1,0 +1,18 @@
+^C3978
+^t10100 Prova 3 frammento 1 B86F
+^t10200prova trasmissione testo              trasmissione 3FF2
+^t30300prova trasmissione testo              trasmissione53A6
+^t20400prova trasmissione testo              trasmissione 5565
+^t40500prova trasmissione testo              trasmissione 9C67
+^t40600prova trasmissione testo              trasmissione 22F9
+^t10700prova trasmissione testo              trasmissione 23DE
+^t30800prova trasmissione testo              trasmissione 5FF3
+^t10900prova trasmissione testo              trasmissione 816C
+^t20A00prova trasmissione testo              trasmissione 6D3D
+^t10B00prova trasmissione testo              trasmissione F441
+^t20C00prova trasmissione testo              trasmissione 17D5
+^t10D00prova trasmissione testo              trasmissione 2C1B
+^t40E00prova trasmissione testo              trasmissione 2D3C
+^t10F00prova trasmissione testo              trasmissione C3DC
+^t21000prova trasmissione testo              trasmissione 5AA0
+^C3978

@@ -1,0 +1,6 @@
+^C
+^t10200prova trasmissione testo              trasmissione 1
+^t30300prova trasmissione testo              trasmissione 2
+^t20400prova trasmissione testo              trasmissione 3
+^t40500prova trasmissione testo              trasmissione 4
+^t40600prova trasmissione testo              trasmissione 5
