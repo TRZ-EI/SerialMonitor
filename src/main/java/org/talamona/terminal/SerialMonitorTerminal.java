@@ -20,6 +20,8 @@
  */
 package org.talamona.terminal;
 
+import com.fazecast.jSerialComm.SerialPort;
+
 import java.awt.FlowLayout;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -28,10 +30,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Enumeration;
-import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.UnsupportedCommOperationException;
+//import gnu.io.CommPortIdentifier;
+//import gnu.io.PortInUseException;
+//import gnu.io.SerialPort;
+//import gnu.io.UnsupportedCommOperationException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -116,12 +118,21 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
         public SerialClient(String wantedPortName, int baudRate) {
 
             // Get an enumeration of all ports known to JavaComm
-            Enumeration portIdentifiers =
-                    CommPortIdentifier.getPortIdentifiers();
+            SerialPort[] ports = SerialPort.getCommPorts();
 
-            CommPortIdentifier portId = null;
+//            Enumeration portIdentifiers =
+//                    CommPortIdentifier.getPortIdentifiers();
 
+//            CommPortIdentifier portId = null;
+
+            for(SerialPort port: ports){
+                port.getSystemPortName();
+            }
+            this.port = SerialPort.getCommPort(wantedPortName);
+            this.port.setBaudRate(baudRate);
+            this.port.openPort();
             // If there's a serial port with the correct name, grab it.
+/*
             while (portIdentifiers.hasMoreElements()) {
                 CommPortIdentifier pid =
                         (CommPortIdentifier) portIdentifiers.nextElement();
@@ -155,6 +166,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
                 System.exit(1);
             }
         // Done setting up, now we wait for something to grab the IOStreams.
+*/
         }
 
         /**
@@ -165,7 +177,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
             OutputStream os = null;
             try {
                 os = port.getOutputStream();
-            } catch (IOException e) {
+            } catch (Exception e) {
             }
             return os;
         }
@@ -178,7 +190,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
             InputStream is = null;
             try {
                 is = port.getInputStream();
-            } catch (IOException e) {
+            } catch (Exception e) {
             }
             return is;
         }
@@ -187,7 +199,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
          * Close the port, so other things can use it.
          */
         public void close() {
-            port.close();
+            port.closePort();
         }
     }
 
@@ -208,7 +220,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
      * Creates a new CrapTerminal GUI.
      */
     public SerialMonitorTerminal() {
-        super("CrapTerminal");
+        super("SerialMonitor");
         setLAF();
 
         initComponents();
@@ -228,18 +240,16 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
      */
     private void getSerialPorts() {
 
-        Enumeration portIdentifiers = CommPortIdentifier.getPortIdentifiers();
+        SerialPort[] ports = SerialPort.getCommPorts();
+        //Enumeration portIdentifiers = CommPortIdentifier.getPortIdentifiers();
         serialPort.removeAllItems();
         // First item is blank, so we don't *have* to connect to COM1/ttsy0/etc
         serialPort.addItem("");
 
-        while (portIdentifiers.hasMoreElements()) {
-            CommPortIdentifier pid =
-                    (CommPortIdentifier) portIdentifiers.nextElement();
-            if (pid.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                serialPort.addItem(pid.getName());
-            }
+        for (SerialPort port: ports){
+            serialPort.addItem(port.getSystemPortName());
         }
+
         // If you have only one serial port, use it.
         if (serialPort.getItemCount() == 2) {
             serialPort.setSelectedIndex(1);
