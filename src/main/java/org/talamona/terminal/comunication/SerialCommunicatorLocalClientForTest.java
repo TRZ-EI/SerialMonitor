@@ -222,16 +222,14 @@ public class SerialCommunicatorLocalClientForTest implements SerialCommunicatorI
         Thread runner = new Thread(sc);
         runner.start();
 
-        System.out.println("********* EMBEDDED SSL BROKER STARTED *****************");
+        System.out.println("********* SERIAL COMUNICATOR STARTED *****************");
         java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
-        String input = "WRITE  'STOP' TO STOP SERVER ...";
+        String input = "WRITE  'STOP' TO STOP COMUNICATOR ...";
         System.out.println(input);
         while ((input = reader.readLine()).length() != 0) {
-            if (input.equalsIgnoreCase("s")) {
+            if (input.equalsIgnoreCase("stop")) {
                 runner.suspend();
-                System.out.println("Service interrupted");
-            }else{
-                runner.resume();
+                System.out.println("Comunicator interrupted");
             }
         }
 

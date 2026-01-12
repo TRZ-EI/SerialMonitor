@@ -63,7 +63,7 @@
         <dependency>
             <groupId>jacksum</groupId>
             <artifactId>jacksum</artifactId>
-            <version>1.7.0</version>
+            <version>3.7.0</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
