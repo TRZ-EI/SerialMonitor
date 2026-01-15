@@ -36,6 +36,7 @@ public class TRZSerialPortListener implements SerialPortDataListener {
                 }
                 message.append((char) data);
             }
+            this.appendMessageTotextArea(message);
             if (message.toString().startsWith("^")) {
 
                 // ONLY ONE MESSAGE
@@ -62,4 +63,20 @@ public class TRZSerialPortListener implements SerialPortDataListener {
         } catch (Exception e) {
             e.printStackTrace();
         }    }
+
+    private void appendMessageTotextArea(StringBuilder message) {
+        this.serialDataManager.getIncomingTextAree().append(message.toString() + '\n');
+
+/*
+        String originalMessage = this.serialDataManager.getIncomingTextAree().getText();
+        if (originalMessage != null){
+            StringBuilder buffer = new StringBuilder(originalMessage);
+            buffer.append('\n');
+            buffer.append(message.toString());
+            this.serialDataManager.getIncomingTextAree().setText(buffer.toString());
+
+        }
+*/
+
+    }
 }

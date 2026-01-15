@@ -21,21 +21,18 @@
 package org.talamona.terminal;
 
 import com.fazecast.jSerialComm.SerialPort;
+import org.talamona.terminal.comunication.SerialDataManager;
 
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.Enumeration;
 //import gnu.io.CommPortIdentifier;
 //import gnu.io.PortInUseException;
 //import gnu.io.SerialPort;
 //import gnu.io.UnsupportedCommOperationException;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.text.BadLocationException;
 
@@ -74,34 +71,11 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
     private javax.swing.JLabel serialPortLabel;
     private javax.swing.JPanel topLeft;
     private javax.swing.JButton sendFile;
+    private javax.swing.JButton saveButton;
 
     /**
      * Inner class for the serial reader thread.
      */
-    private class RemoteReader implements Runnable {
-
-        /**
-         * Run method, for great threadage.
-         */
-        public void run() {
-
-            int nextByte;
-
-            // Reader runs forever
-            while (true) {
-                try {
-                    // This goes false when changing port/baud.
-                    while (continueWithReader) {
-                        nextByte = reader.read();
-                        displayText(String.valueOf((char) nextByte), 1);
-                    }
-                } catch (IOException ex) {
-                    // If we're in a read operation when we change port/baud,
-                    // we'll end up here.  Nothing to worry about.
-                }
-            }
-        }
-    }
 
     /**
      * Inner class to set up a serial connection.  This requires JavaComm 2.
@@ -126,17 +100,10 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
      */
     public SerialMonitorTerminal() {
         super("SerialMonitor");
-        setLAF();
-
+        setLookAndFeel();
         initComponents();
-
         getSerialPorts();
-
         this.setVisible(true);
-
-        // Launch network reader thread.
-        readerThread = new Thread(new RemoteReader());
-        readerThread.start();
     }
 
     /**
@@ -166,13 +133,12 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
     // set it manually.
     }
 
-    private void setLAF() {
+    private void setLookAndFeel() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             System.out.println("Error setting LAF: " + e);
         }
-
     }
 
     /** 
@@ -197,12 +163,14 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
         incomingScrollPane = new javax.swing.JScrollPane();
         incoming = new javax.swing.JTextArea(""); // AREA TO PRINT SERIAL DATA
         sendPanel = new javax.swing.JPanel();
-        sendButton = new javax.swing.JButton("Send");
+        //sendButton = new javax.swing.JButton("Send");
         outgoingScrollPane = new javax.swing.JScrollPane();
         outgoing = new javax.swing.JTextArea();
         sendFile = new javax.swing.JButton("Send File");
+        this.saveButton = new javax.swing.JButton("Save");
 
         sendFile.setToolTipText("Send a block of text or binary data.");
+        this.saveButton.setToolTipText("Save content to a file");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(java.awt.SystemColor.control);
@@ -276,8 +244,9 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(incomingScrollPane);
 
-        sendPanel.setLayout(new java.awt.BorderLayout());
+        sendPanel.setLayout(new java.awt.FlowLayout(FlowLayout.RIGHT));
 
+/*
         sendButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -285,15 +254,23 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
             }
         });
         sendPanel.add(sendButton, java.awt.BorderLayout.EAST);
-
+*/
         sendFile.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sendFile(evt);
             }
         });
 
-        sendPanel.add(sendFile, java.awt.BorderLayout.EAST);
+        this.saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                // TODO: saveFileMethod;
+            }
+        });
+
+//        sendPanel.add(sendFile, java.awt.BorderLayout.EAST);
+//        sendPanel.add(this.saveButton, java.awt.BorderLayout.CENTER);
+        sendPanel.add(sendFile);
+        sendPanel.add(this.saveButton);
 
         outgoing.setColumns(20);
         outgoing.setRows(1);
@@ -336,42 +313,15 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
      * @param evt
      */
     private void serialPortActionPerformed(java.awt.event.ActionEvent evt) {
-        // Disable the reader thread temporarily.  (Or until the user selects a
-        // real serial port, if we're on the first execution of this method!)
-        continueWithReader = false;
-        if (serialPort.getSelectedItem() == "") {
-            // If we haven't selected a serial port, just give up and wait until
-            // we have.
-            return;
-        }
+        String serialPortName = serialPort.getSelectedItem().toString();
+        String baudRateName = baudRate.getSelectedItem().toString();
 
-        if (reader != null) {
-            try {
-                // Close the old reader.
-                reader.close();
-            } catch (IOException ex) {
-                // If we get here, it was probably just because the last reader
-                // quit unexpectedly, so we don't worry and make a new one
-                // anyway.
-            }
+        if (!serialPortName.equals("") && !baudRateName.equals("")) {
+            SerialDataManager serialDataManager = SerialDataManager.createNewInstance();
+            serialDataManager.connectToSerialPort(serialPortName, baudRateName);
+            incoming.setText(null);
+            serialDataManager.setUiControlToWrite(incoming);
         }
-        if (serialClient != null) {
-            // Also close the serial client if it exists (doesn't exist on first
-            // run)
-            serialClient.close();
-        }
-
-        // Make a new serial client and attach the reader.
-        serialClient = new SerialClient(serialPort.getSelectedItem().toString(),
-                (Integer) Integer.valueOf(baudRate.getSelectedItem().toString()));
-        reader =
-                new BufferedReader(new InputStreamReader(
-                serialClient.getInputStream()));
-        writer = serialClient.getOutputStream();
-        // Blank the display
-        incoming.setText(null);
-        // Enable reading again.
-        continueWithReader = true;
     }
 
     /**
@@ -380,6 +330,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
      * @param evt
      */
     private void baudRateActionPerformed(java.awt.event.ActionEvent evt) {
+
         serialPortActionPerformed(null);
     }
 

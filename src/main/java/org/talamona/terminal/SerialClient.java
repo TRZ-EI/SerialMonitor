@@ -1,13 +1,11 @@
 package org.talamona.terminal;
 
 import com.fazecast.jSerialComm.SerialPort;
+import org.talamona.terminal.comunication.SerialDataManager;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/**
- * Inner class to set up a serial connection.  This requires JavaComm 2.
- */
 class SerialClient {
 
     SerialPort port = null;
@@ -16,9 +14,9 @@ class SerialClient {
      * Construct a serial comms client
      *
      * @param wantedPortName Desired serial port name, e.g. "COM1"
-     * @param baudRate       Desired baud rate.
+     * @param baudRateValue       Desired baud rate.
      */
-    public SerialClient(String wantedPortName, int baudRate) {
+    public SerialClient(String wantedPortName, String baudRateValue) {
 
         // Get an enumeration of all ports known to JavaComm
         SerialPort[] ports = SerialPort.getCommPorts();
@@ -31,9 +29,11 @@ class SerialClient {
         for (SerialPort port : ports) {
             port.getSystemPortName();
         }
-        this.port = SerialPort.getCommPort(wantedPortName);
-        this.port.setBaudRate(baudRate);
-        this.port.openPort();
+        this.port = SerialDataManager.createNewInstance().connectToSerialPort(wantedPortName, baudRateValue);
+
+        //this.port = SerialPort.getCommPort(wantedPortName);
+        //this.port.setBaudRate(baudRate);
+        //this.port.openPort();
         // If there's a serial port with the correct name, grab it.
 /*
         while (portIdentifiers.hasMoreElements()) {

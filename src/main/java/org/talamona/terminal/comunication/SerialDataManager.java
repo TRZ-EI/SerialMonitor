@@ -7,6 +7,7 @@ import org.talamona.terminal.crc.Crc16CcittKermit;
 import org.talamona.terminal.structure.serial.MultipleCommandSplitter;
 import org.talamona.terminal.utils.ConfigurationHolder;
 
+import javax.swing.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -22,6 +23,7 @@ public class SerialDataManager {
     private SerialPort serialPort;
     private MultipleCommandSplitter multipleCommandSplitter;
     private BlockingQueue<String> serialBuffer;
+    private JTextArea textArea;
 
     public static SerialDataManager createNewInstance(){
         return new SerialDataManager();
@@ -46,24 +48,24 @@ public class SerialDataManager {
         return (char)Integer.parseInt(value, 16);
     }
 
-
-    public SerialPort connectToSerialPort(){
-        try {
-            String serialPortName = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.PORT);
-            String baudRateValue = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.BAUD_RATE);
-            int baudRate = Integer.parseInt(baudRateValue, 10);
-
-            this.configureAndOpenSerialPort(serialPortName, baudRate);
-            if (serialPort != null){
-                System.out.println("Connected !!!");
-                this.serialPort.addDataListener(new TRZSerialPortListener(this));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public SerialPort connectToSerialPort(String serialPortName, String baudRateValue){
+        this.configureAndOpenSerialPort(serialPortName, baudRateValue);
+        if (this.serialPort != null){
+            System.out.println("Connected !!!");
+            this.serialPort.addDataListener(new TRZSerialPortListener(this));
         }
         return this.serialPort;
+
     }
-    private void configureAndOpenSerialPort(String serialPortName, int baudRate) {
+
+    public SerialPort connectToSerialPort(){
+        String serialPortName = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.PORT);
+        String baudRateValue = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.BAUD_RATE);
+        this.connectToSerialPort(serialPortName, baudRateValue);
+        return this.serialPort;
+    }
+    private void configureAndOpenSerialPort(String serialPortName, String baudRateValue) {
+        int baudRate = Integer.parseInt(baudRateValue, 10);
         this.serialPort = SerialPort.getCommPort(serialPortName);
         this.serialPort.setBaudRate(baudRate);
         this.serialPort.setComPortParameters(baudRate, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
@@ -134,4 +136,12 @@ public class SerialDataManager {
     public MultipleCommandSplitter getMultipleCommandSplitter() {
         return this.multipleCommandSplitter;
     }
+
+    public void setUiControlToWrite(JTextArea incoming) {
+        this.textArea = incoming;
+    }
+    public JTextArea getIncomingTextAree(){
+        return this.textArea;
+    }
+
 }
