@@ -45,10 +45,16 @@
     </profiles>
 
     <dependencies>
+        <!-- Source: https://mvnrepository.com/artifact/org.openjfx/javafx -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.1</version>
+            <version>17.0.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>17.0.17</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -63,7 +69,7 @@
         <dependency>
             <groupId>jacksum</groupId>
             <artifactId>jacksum</artifactId>
-            <version>3.7.0</version>
+            <version>1.7.0</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -108,6 +114,14 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+<!--                    <mainClass>hellofx/org.openjfx.App</mainClass>-->
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -180,4 +194,22 @@
         </resources>
 
     </build>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
