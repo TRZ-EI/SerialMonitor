@@ -73,7 +73,7 @@ public class SerialCommunicatorLocalClientForTest implements SerialCommunicatorI
 
     //open the input and output streams
     //pre: an open port
-    //post: initialized intput and output streams for use to communicate data
+    //post: initialized input and output streams for use to communicate data
     public boolean initIOStream(){
         input = serialPort.getInputStream();
         output = serialPort.getOutputStream();

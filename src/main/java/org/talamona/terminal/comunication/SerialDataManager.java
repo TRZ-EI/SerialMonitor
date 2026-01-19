@@ -8,6 +8,7 @@ import org.talamona.terminal.structure.serial.MultipleCommandSplitter;
 import org.talamona.terminal.utils.ConfigurationHolder;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -56,6 +57,15 @@ public class SerialDataManager {
         }
         return this.serialPort;
 
+    }
+    public void writeToSerialPort(byte[] data){
+        try {
+            DataWriterToSerialPort dw = new DataWriterToSerialPort(this.serialPort);
+            dw.writeData(data);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public SerialPort connectToSerialPort(){

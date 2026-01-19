@@ -21,6 +21,7 @@
 package org.talamona.terminal;
 
 import com.fazecast.jSerialComm.SerialPort;
+import org.talamona.terminal.comunication.DataWriterToSerialPort;
 import org.talamona.terminal.comunication.SerialDataManager;
 
 import java.awt.*;
@@ -63,7 +64,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
     private javax.swing.JPanel aboutPanel;
     private javax.swing.JLabel aboutText;
     private javax.swing.JTextArea outgoing;
-    private javax.swing.JScrollPane outgoingScrollPane;
+    //private javax.swing.JScrollPane outgoingScrollPane;
     private javax.swing.JPanel rightPanel;
     private javax.swing.JButton sendButton;
     private javax.swing.JPanel sendPanel;
@@ -72,6 +73,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
     private javax.swing.JPanel topLeft;
     private javax.swing.JButton sendFile;
     private javax.swing.JButton saveButton;
+    private SerialDataManager serialDataManager;
 
     /**
      * Inner class for the serial reader thread.
@@ -158,13 +160,13 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
         bgPanel = new javax.swing.JPanel();
         mainPanel = new javax.swing.JPanel();
         aboutPanel = new javax.swing.JPanel();
-        aboutText = new javax.swing.JLabel("This software is released under the GNU GPL v3.  For more information, visit http://www.onlydreaming.net/software/crapterminal");
+        aboutText = new javax.swing.JLabel("TRZ Serial monitor terminal - developed by L.Talamona");
         jSplitPane1 = new javax.swing.JSplitPane();
         incomingScrollPane = new javax.swing.JScrollPane();
         incoming = new javax.swing.JTextArea(""); // AREA TO PRINT SERIAL DATA
         sendPanel = new javax.swing.JPanel();
         //sendButton = new javax.swing.JButton("Send");
-        outgoingScrollPane = new javax.swing.JScrollPane();
+        //outgoingScrollPane = new javax.swing.JScrollPane();
         outgoing = new javax.swing.JTextArea();
         sendFile = new javax.swing.JButton("Send File");
         this.saveButton = new javax.swing.JButton("Save");
@@ -263,6 +265,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
 
         this.saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                // byte[] dataToSave =
                 // TODO: saveFileMethod;
             }
         });
@@ -281,9 +284,9 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
                 outgoingKeyTyped(evt);
             }
         });
-        outgoingScrollPane.setViewportView(outgoing);
+        //outgoingScrollPane.setViewportView(outgoing);
 
-        sendPanel.add(outgoingScrollPane, java.awt.BorderLayout.CENTER);
+        //sendPanel.add(outgoingScrollPane, java.awt.BorderLayout.CENTER);
 
         jSplitPane1.setRightComponent(sendPanel);
 
@@ -317,10 +320,10 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
         String baudRateName = baudRate.getSelectedItem().toString();
 
         if (!serialPortName.equals("") && !baudRateName.equals("")) {
-            SerialDataManager serialDataManager = SerialDataManager.createNewInstance();
-            serialDataManager.connectToSerialPort(serialPortName, baudRateName);
+            this.serialDataManager = SerialDataManager.createNewInstance();
+            this.serialDataManager.connectToSerialPort(serialPortName, baudRateName);
             incoming.setText(null);
-            serialDataManager.setUiControlToWrite(incoming);
+            this.serialDataManager.setUiControlToWrite(incoming);
         }
     }
 
@@ -352,17 +355,21 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
                 System.arraycopy(checksum, 0, packet, bytesRead+2, 2);
                 packet[0] = (byte)Math.floor(bytesRead/256);
                 packet[1] = (byte)bytesRead;
+                // TODO: implements sender to serial
+                if (this.serialDataManager != null) {
+                    this.serialDataManager.writeToSerialPort(packet);
 
-                writer.write(packet);
-                writer.flush();
+                    //writer.write(packet);
+                    //writer.flush();
 
-                String display = "[BINARY DATA:  ";
-                display = display+String.format("%02X %02X   ", packet[0], packet[1]);
-                for (int i=2; i<packet.length-2; i++) {
-                    display = display+String.format("%02X ", packet[i]);
+                    String display = "[BINARY DATA:  ";
+                    display = display + String.format("%02X %02X   ", packet[0], packet[1]);
+                    for (int i = 2; i < packet.length - 2; i++) {
+                        display = display + String.format("%02X ", packet[i]);
+                    }
+                    display = display + String.format("   %02X %02X  ]", packet[packet.length - 2], packet[packet.length - 1]);
+                    displayText(display, 2);
                 }
-                display = display+String.format("   %02X %02X  ]", packet[packet.length-2], packet[packet.length-1]);
-                displayText(display, 2);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -423,6 +430,9 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
         }
         System.arraycopy(new byte[]{13,10}, 0, textBytes, 0, 2);
         System.arraycopy(new byte[]{13,10}, 0, textBytes, textChars.length+2, 2);
+
+
+
         writer.write(textBytes);
         writer.flush();
         displayText(text + "\r\n", 2);
