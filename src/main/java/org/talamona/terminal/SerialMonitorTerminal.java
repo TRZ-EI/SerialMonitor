@@ -25,10 +25,7 @@ import org.talamona.terminal.comunication.DataWriterToSerialPort;
 import org.talamona.terminal.comunication.SerialDataManager;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 //import gnu.io.CommPortIdentifier;
 //import gnu.io.PortInUseException;
 //import gnu.io.SerialPort;
@@ -265,6 +262,7 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
 
         this.saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveDataToFile();
                 // byte[] dataToSave =
                 // TODO: saveFileMethod;
             }
@@ -306,6 +304,22 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
 
         pack();
 
+    }
+
+    private void saveDataToFile() {
+        byte[] data = this.incoming.getText().getBytes();
+        JFileChooser fc = new JFileChooser();
+        fc.showOpenDialog(null);
+        if (fc.getSelectedFile() != null) {
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(fc.getSelectedFile());
+                fileOutputStream.write(data);
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
