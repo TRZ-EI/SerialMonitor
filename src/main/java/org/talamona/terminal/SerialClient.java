@@ -1,104 +1,42 @@
 package org.talamona.terminal;
 
 import com.fazecast.jSerialComm.SerialPort;
+import org.talamona.terminal.comunication.GeneralPurposeSerialPortListener;
 import org.talamona.terminal.comunication.SerialDataManager;
+import org.talamona.terminal.utils.ConfigurationHolder;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
-class SerialClient {
+public class SerialClient implements Runnable{
 
     SerialPort port = null;
+    private SerialPort serialPort;
+    private String portName;
+    private String baudRate;
 
-    /**
-     * Construct a serial comms client
-     *
-     * @param wantedPortName Desired serial port name, e.g. "COM1"
-     * @param baudRateValue       Desired baud rate.
-     */
-    public SerialClient(String wantedPortName, String baudRateValue) {
 
-        // Get an enumeration of all ports known to JavaComm
-        SerialPort[] ports = SerialPort.getCommPorts();
+    public SerialClient() {
+        this.portName = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.PORT);
+        this.baudRate = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.BAUD_RATE);
+    }
+    @Override
+    public void run() {
+        this.configureAndOpenSerialPort();
 
-//            Enumeration portIdentifiers =
-//                    CommPortIdentifier.getPortIdentifiers();
-
-//            CommPortIdentifier portId = null;
-
-        for (SerialPort port : ports) {
-            port.getSystemPortName();
+    }
+    private void configureAndOpenSerialPort() {
+        int baudRate = Integer.parseInt(this.baudRate, 10);
+        this.serialPort = SerialPort.getCommPort(this.portName);
+        this.serialPort.setBaudRate(baudRate);
+        this.serialPort.setComPortParameters(baudRate, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
+        this.serialPort.openPort();
+        this.serialPort.addDataListener(new GeneralPurposeSerialPortListener(this.serialPort.getInputStream()));
+        if (this.serialPort != null){
+            System.out.println("Connected to " + this.serialPort.getSystemPortName() + " and baud = " + this.serialPort.getBaudRate());
         }
-        this.port = SerialDataManager.createNewInstance().connectToSerialPort(wantedPortName, baudRateValue);
-
-        //this.port = SerialPort.getCommPort(wantedPortName);
-        //this.port.setBaudRate(baudRate);
-        //this.port.openPort();
-        // If there's a serial port with the correct name, grab it.
-/*
-        while (portIdentifiers.hasMoreElements()) {
-            CommPortIdentifier pid =
-                    (CommPortIdentifier) portIdentifiers.nextElement();
-            if (pid.getPortType() == CommPortIdentifier.PORT_SERIAL &&
-                    pid.getName().equals(wantedPortName)) {
-                portId = pid;
-                break;
-            }
-        }
-        if (portId == null) {
-            JOptionPane.showMessageDialog(null,
-                    "Could not find serial port " + wantedPortName,
-                    "Error!", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-
-        try {
-            port = (SerialPort) portId.open("CrapTerminal", 10000);
-        } catch (PortInUseException e) {
-            JOptionPane.showMessageDialog(null, "Port " + wantedPortName +
-                    " is in use by another application.", "Error!",
-                    JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-        try {
-            port.setSerialPortParams(baudRate, SerialPort.DATABITS_8,
-                    SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-        } catch (UnsupportedCommOperationException ex) {
-            JOptionPane.showMessageDialog(null,
-                    "Could not configure port to required parameters (e.g. baud" + " rate)", "Error!", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-    // Done setting up, now we wait for something to grab the IOStreams.
-*/
     }
 
-    /**
-     * Get the OutputStream attached to the serial port.
-     *
-     * @return The OutputStream.
-     */
-    public OutputStream getOutputStream() {
-        OutputStream os = null;
-        try {
-            os = port.getOutputStream();
-        } catch (Exception e) {
-        }
-        return os;
-    }
-
-    /**
-     * Get the InputStream attached to the serial port.
-     *
-     * @return The InputStream.
-     */
-    public InputStream getInputStream() {
-        InputStream is = null;
-        try {
-            is = port.getInputStream();
-        } catch (Exception e) {
-        }
-        return is;
-    }
 
     /**
      * Close the port, so other things can use it.
@@ -106,4 +44,27 @@ class SerialClient {
     public void close() {
         port.closePort();
     }
+    public static void main(String[] args){
+        SerialClient client = new SerialClient();
+        Thread runner = new Thread(client);
+        runner.start();
+
+        System.out.println("********* SERIAL CLIENT STARTED *****************");
+        java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+        String input = "WRITE  'STOP' TO STOP SERIAL CLIENT ...";
+        System.out.println(input);
+        try {
+            while (!(input = reader.readLine()).isEmpty()) {
+                if (input.equalsIgnoreCase("stop")) {
+                    runner.suspend();
+                    System.out.println("Comunicator interrupted");
+                }
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+
+
 }// End Inner class

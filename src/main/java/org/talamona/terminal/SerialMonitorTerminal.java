@@ -23,9 +23,14 @@ package org.talamona.terminal;
 import com.fazecast.jSerialComm.SerialPort;
 import org.talamona.terminal.comunication.DataWriterToSerialPort;
 import org.talamona.terminal.comunication.SerialDataManager;
+import org.talamona.terminal.crc.CRC16CCITT;
+import org.talamona.terminal.crc.CRCCalculator;
+import org.talamona.terminal.crc.Crc16CcittKermit;
+import org.talamona.terminal.utils.ConfigurationHolder;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Scanner;
 //import gnu.io.CommPortIdentifier;
 //import gnu.io.PortInUseException;
 //import gnu.io.SerialPort;
@@ -360,6 +365,32 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
         fc.showOpenDialog(null);
         if (fc.getSelectedFile() != null) {
             try {
+                Scanner lineReader = new Scanner(fc.getSelectedFile());
+                CRCCalculator crcCalculator = this.selectCalculator();
+                String line = null;
+                while (lineReader.hasNextLine()) {
+                    Thread.sleep(1000);
+                    line = lineReader.nextLine();
+                    line += this.tranformCRCValueToString(crcCalculator.calculateCRCForStringMessage(line));
+                    line += this.readNewLineValueFromConfiguration();
+
+                    if (this.serialDataManager != null) {
+                        this.serialDataManager.writeToSerialPort(line.getBytes());
+                        this.incoming.append(line + '\n');
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            outgoing.requestFocusInWindow();
+        }
+    }
+
+
+
+
+
+/*
                 FileInputStream r = new FileInputStream(fc.getSelectedFile());
                 byte[] buf = new byte[1024];
                 int bytesRead = r.read(buf);
@@ -370,8 +401,6 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
                 packet[0] = (byte)Math.floor(bytesRead/256);
                 packet[1] = (byte)bytesRead;
                 // TODO: implements sender to serial
-                if (this.serialDataManager != null) {
-                    this.serialDataManager.writeToSerialPort(packet);
 
                     //writer.write(packet);
                     //writer.flush();
@@ -391,17 +420,54 @@ public class SerialMonitorTerminal extends javax.swing.JFrame {
 
         outgoing.requestFocusInWindow();
     }
-
-    public byte[] calcChecksum(byte[] packet) {
-        byte[] checksum = new byte[2];
-        long sum = 0;
-        for (int i=0; i<packet.length; i++) {
-            sum += (packet[i] & 0xff);
-        }
-        checksum[0] = (byte) (sum/256L);
-        checksum[1] = (byte) (sum%256L);
-        return checksum;
+*/
+    private CRCCalculator selectCalculator() {
+        String crc = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.CRC);
+        return (crc.equalsIgnoreCase("kermit"))? Crc16CcittKermit.getNewInstance(): CRC16CCITT.getNewInstance();
     }
+    private String tranformCRCValueToString(long crc){
+        String crcHex = Long.toHexString(crc);
+        if (crcHex.length() == 3){
+            crcHex = "0" + crcHex;
+        }else if (crcHex.length() == 2){
+            crcHex = "00" + crcHex;
+        }else if (crcHex.length() == 1){
+            crcHex = "000" + crcHex;
+        }
+        return crcHex;
+    }
+    private char readNewLineValueFromConfiguration() {
+        String value = ConfigurationHolder.getInstance().getProperties().getProperty(ConfigurationHolder.END_OF_LINE);
+        return (char)Integer.parseInt(value, 16);
+
+    }
+
+
+
+
+    /*
+        public BlockingQueue<String> runScenario(String fileName) throws IOException, InterruptedException {
+        String realFileName = this.getClass().getClassLoader().getResource(fileName).getFile();
+        Scanner linReader = new Scanner(new File(realFileName));
+        CRCCalculator crcCalculator = this.selectCalculator();
+
+        String line = null;
+        while(linReader.hasNextLine()){
+            Thread.sleep(this.waitingTime);
+
+            line = linReader.nextLine();
+            line += this.tranformCRCValueToString(crcCalculator.calculateCRCForStringMessage(line));
+            this.serialBuffer.addAll(MultipleCommandSplitter.getNewInstance().splitMultipleCommand(line));
+            System.out.println(line);
+        }
+        return this.serialBuffer;
+
+    }
+
+     */
+
+
+
 
     /**
      * Closes things down tidily and exits.
