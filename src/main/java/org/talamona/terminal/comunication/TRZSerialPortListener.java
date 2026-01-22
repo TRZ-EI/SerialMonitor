@@ -10,10 +10,10 @@ import java.util.List;
 public class TRZSerialPortListener implements SerialPortDataListener {
 
     private SerialDataManager serialDataManager;
-    private DrawingText main;
 
     public TRZSerialPortListener(SerialDataManager serialDataManager){
         this.serialDataManager = serialDataManager;
+        this.serialDataManager.getIncomingTextAree().setText("");
     }
 
     @Override
@@ -25,8 +25,10 @@ public class TRZSerialPortListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent event)    {
         int data = 0;
         if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE){
+            this.serialDataManager.getIncomingTextAree().setText("");
             return;
         }
+
         try {
             StringBuilder message = new StringBuilder();
 
@@ -36,36 +38,34 @@ public class TRZSerialPortListener implements SerialPortDataListener {
                 }
                 message.append((char) data);
             }
-            this.appendMessageTotextArea(message);
-            if (message.toString().startsWith("^")) {
+
+            boolean isValid = this.serialDataManager.calculateCRC(new String[]{message.toString()});
+            String strippedMessage = stripCrcFromMessage(message.toString());
+            this.appendMessageToTextArea(strippedMessage);
 
                 // ONLY ONE MESSAGE
-                boolean isValid = this.serialDataManager.calculateCRC(new String[]{message.toString()});
-                if (isValid) {
-
-                    // TO MANAGE MULTIPLE COMMANDS IN A SINGLE ROW
-                    List<String> commands = this.serialDataManager.getMultipleCommandSplitter().splitMultipleCommand(message.toString());
-
-                    this.serialDataManager.getSerialBuffer().addAll(commands);
-//                    this.main.runAndWaitMyRunnable();
-
-                    this.serialDataManager.getSerialPort().getOutputStream().write(new String("OK").getBytes());
-                    this.serialDataManager.getSerialPort().getOutputStream().flush();
+                if (!isValid) {
+                    throw new Exception("PROBLEMS WITH CRC");
                 }
-                else{
-                    //serialPort.getOutputStream().write(new String("KO: " + message.toString() + NEW_LINE).getBytes());
-                    //serialPort.getOutputStream().flush();
-                }
-            }
 
 
 
         } catch (Exception e) {
             e.printStackTrace();
-        }    }
 
-    private void appendMessageTotextArea(StringBuilder message) {
-        this.serialDataManager.getIncomingTextAree().append(message.toString() + '\n');
+
+        }
+    }
+
+    private String stripCrcFromMessage(String message) {
+        int crcLenght = 4;
+        return message.substring(0, message.length() - crcLenght);
+
+    }
+
+    private void appendMessageToTextArea(String message) {
+        this.serialDataManager.getIncomingTextAree().append(message + '\n');
+        this.serialDataManager.getIncomingTextAree().requestFocusInWindow();
 
 /*
         String originalMessage = this.serialDataManager.getIncomingTextAree().getText();

@@ -66,6 +66,7 @@ public class SerialCommunicatorLocalClientForTest implements SerialCommunicatorI
 
     public SerialPort connect() {
         this.serialPort = SerialDataManager.createNewInstance().connectToSerialPort();
+        this.serialPort.addDataListener(new GeneralPurposeSerialPortListener(this.input));
         this.initIOStream();
         return this.serialPort;
     }
@@ -261,6 +262,7 @@ public class SerialCommunicatorLocalClientForTest implements SerialCommunicatorI
 
     public void testOne(int interval) {
         this.sendMessagesToRemoteClient("serialInputs/real-examples-prova3-fragment1-1-no-crc.txt", interval);
+/*
         this.sendMessagesToRemoteClient("serialInputs/real-examples-prova3-fragment1-2-no-crc.txt", interval);
         this.sendMessagesToRemoteClient("serialInputs/real-examples-prova3-fragment1-3-no-crc.txt", interval);
         this.sendMessagesToRemoteClient("serialInputs/clean-row-before-cleaner-test-no-crc.txt", interval);
@@ -286,7 +288,6 @@ public class SerialCommunicatorLocalClientForTest implements SerialCommunicatorI
         for (int i = 0; i < 4000; i++){
             this.sendMessagesToRemoteClientReadingList(lines, interval);
         }
-/*
         List<String> lines = this.readTestScenaryAndProduceDataForTest("serialInputs/real-examples-prova3-fragment1-1-no-crc.txt");
         for (int i = 0; i < 4000; i++){
             this.sendMessagesToRemoteClientReadingList(lines, interval);

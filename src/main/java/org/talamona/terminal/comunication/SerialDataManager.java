@@ -58,6 +58,26 @@ public class SerialDataManager {
         return this.serialPort;
 
     }
+    public SerialPort reconnectToSerialPort(String serialPortName, String baudRateValue){
+        if (this.closeSerialPort()) {
+            this.configureAndOpenSerialPort(serialPortName, baudRateValue);
+            if (this.serialPort != null) {
+                System.out.println("Connected !!!");
+                this.serialPort.addDataListener(new TRZSerialPortListener(this));
+            }
+        }
+        return this.serialPort;
+
+    }
+
+    public boolean closeSerialPort(){
+        boolean retValue = false;
+        if(this.serialPort != null && this.serialPort.isOpen()){
+            this.serialPort.removeDataListener();
+            retValue = this.serialPort.closePort();
+        }
+        return retValue;
+    }
     public void writeToSerialPort(byte[] data){
         try {
             DataWriterToSerialPort dw = new DataWriterToSerialPort(this.serialPort);
