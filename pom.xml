@@ -23,12 +23,7 @@
                 </property>
             </activation>
             <properties>
-                <main-class>tbd</main-class>
-                <!-- <main-class>org.talamona.terminal.gui.MainForSerialData</main-class> -->
-                <!--<main-class>org.talamona.terminal.gui.MainWithProgressBarUsingSerialData</main-class>-->
-                <!-- <main-class>org.talamona.terminal.comunication.SerialCommunicator</main-class> -->
-                <!-- The following class is ONLY for test purposes -->
-                <!-- <main-class>org.talamona.terminal.gui.MainForSerialDataToTestCanvas</main-class> -->
+                <main-class>org.talamona.terminal.SerialMonitorTerminal</main-class>
                 <file-name>serialMonitor</file-name>
             </properties>
         </profile>
@@ -38,7 +33,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <main-class>org.talamona.terminal.comunication.SerialCommunicatorRemoteClient</main-class>
+                <main-class>org.talamona.terminal.comunication.SerialCommunicatorLocalClientForTest</main-class>
                 <file-name>trzpoc-console</file-name>
             </properties>
         </profile>
